@@ -42,10 +42,11 @@ def omit_long_encodings(df:pd.DataFrame, max_tokens:int):
     print(f'Omitted {n_long_encodings} encodings that were too long to embed')
     return df
 
-def embed_encodings(df:pd.DataFrame, column_to_embed:str, embedding_model:str):
+def embed_documents(df:pd.DataFrame, column_to_embed:str, embedding_model:str):
     # embed: generate embeddings for 'column_to_embed', by calling the OpenAI API
+    print(f'Embedded {column_to_embed} into an embedding column, by calling the OpenAI API')
+    print('This may take about a minute for 500 documents...')
     df["embedding"] = df[column_to_embed].apply(lambda x: get_embedding(x, engine=embedding_model))
-    print(f'Embedded encodings into an embedding column, by calling the OpenAI API')
     return df
 
 def save_embeddings(df:pd.DataFrame, output_path:str):
@@ -61,6 +62,6 @@ if __name__ == '__main__':
     df = generate_encodings(df=df, column_to_encode=COLUMN_TO_EMBED)  # optional, needed only for omitting long embeddings
     df = omit_long_encodings(df=df, max_tokens=MAX_TOKENS)  # optional, needed only for omitting long embeddings
     openai_auth()
-    df = embed_encodings(df=df, column_to_embed=COLUMN_TO_EMBED, embedding_model=EMBEDDING_MODEL)
+    df = embed_documents(df=df, column_to_embed=COLUMN_TO_EMBED, embedding_model=EMBEDDING_MODEL)
     save_embeddings(df=df, output_path=OUTPUT_PATH)
     print(df.head())
